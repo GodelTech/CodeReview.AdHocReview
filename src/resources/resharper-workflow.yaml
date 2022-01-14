@@ -1,0 +1,31 @@
+volumes:
+  artifacts:
+    targetFolder: /artifacts
+    folderToOutput: ./artifacts
+    readOnly: false
+  imports:
+    targetFolder: /imports
+    folderToImport: ./imports
+    readOnly: false
+activities:
+  resharper:
+    image: godeltech/codereview.analyzers.inspectcode
+    timeout: "1:00:00"
+    environment:
+      SOLUTION_FILE_PATH: /imports/{SOLUTION_FILE_PATH}
+  resharper-converter:
+    image: godeltech/codereview.file-converter
+    command:
+      - resharper
+      - --output
+      - /artifacts/resharper-result.zip
+      - --folder
+      - /artifacts/result.xml
+  resharper-evaluator:
+    image: godeltech/codereview.evaluator
+    command:
+      - import-issues
+      - --output
+      - /artifacts/resharper-issues.db
+      - --issues
+      - /artifacts/resharper-result.zip

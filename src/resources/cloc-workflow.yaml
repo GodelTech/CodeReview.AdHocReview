@@ -1,0 +1,35 @@
+volumes:
+  artifacts:
+    targetFolder: /artifacts
+    folderToOutput: ./artifacts
+    readOnly: false
+  imports:
+    targetFolder: /imports
+    folderToImport: ./imports
+    readOnly: false
+activities:
+  cloc:
+    image: aldanial/cloc
+    command:
+      - --by-file
+      - --report-file=/artifacts/stat.cloc.json
+      - --json
+      - /imports
+  cloc-converter:
+    image: godeltech/codereview.file-converter
+    command:
+      - cloc
+      - --output
+      - /artifacts/stat-converted.cloc.json
+      - --file
+      - /artifacts/stat.cloc.json
+      - --prefix
+      - /imports/
+  cloc-evaluator:
+    image: godeltech/codereview.evaluator
+    command:
+      - import-file-details
+      - --details
+      - /artifacts/stat-converted.cloc.json
+      - --output
+      - /artifacts/cloc-issues.db
