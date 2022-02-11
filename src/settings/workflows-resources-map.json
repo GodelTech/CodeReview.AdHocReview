@@ -1,5 +1,0 @@
-[
-  { "cloc": "cloc-workflow.yaml" },
-  { "roslyn": "roslyn-workflow.yaml" },
-  { "resharper": "resharper-workflow.yaml" }
-]
