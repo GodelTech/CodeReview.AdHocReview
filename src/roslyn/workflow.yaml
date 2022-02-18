@@ -1,0 +1,35 @@
+volumes:
+  artifacts:
+    targetFolder: /artifacts
+    folderToOutput: ./artifacts
+    readOnly: false
+  imports:
+    targetFolder: /imports
+    folderToImport: ./imports
+    readOnly: false
+activities:
+  roslyn:
+    image: godeltech/codereview.analyzers.roslyn
+    timeout: "1:00:00"
+    environment:
+      SOLUTION_FILE_PATH: /imports/{SOLUTION_FILE_PATH}
+  roslyn-converter:
+    image: godeltech/codereview.file-converter
+    command:
+      - roslyn
+      - --output
+      - /artifacts/rolsyn-result.zip
+      - --folder
+      - /artifacts
+      - --src
+      - /imports/
+      - --mask
+      - '*.roslyn.json'
+  roslyn-evaluator:
+    image: godeltech/codereview.evaluator
+    command:
+      - import-issues
+      - --output
+      - /artifacts/roslyn-issues.db
+      - --issues
+      - /artifacts/rolsyn-result.zip
