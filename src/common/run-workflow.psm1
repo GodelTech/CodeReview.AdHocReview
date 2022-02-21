@@ -2,7 +2,8 @@ function Start-Orchestrator {
 param (
     [Parameter(Mandatory)][string] $workflowFilePath,
     [Parameter(Mandatory)][string] $outputDirectoryPath,
-    [Parameter(Mandatory)][string] $importDirectoryPath
+    [Parameter(Mandatory)][string] $importDirectoryPath,
+    [Parameter(Mandatory)][string] $sourceDirectoryPath
 )
     Write-Host "Creating docker container godeltech/codereview.orchestrator..."
     
@@ -22,7 +23,17 @@ param (
     
         return $False
     }
-    
+
+    Write-Host "Copy source directory to the container..."
+    docker cp $sourceDirectoryPath orchestrator:/app/src
+    if (-not $?) {
+        Write-Error -Message "Cannot copy source directory to the container"
+
+        docker rm orchestrator
+
+        return $False
+    }
+
     Write-Host "Copy import directory to the container..."
     docker cp $importDirectoryPath orchestrator:/app/imports
     if (-not $?) {

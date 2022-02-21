@@ -7,12 +7,16 @@ volumes:
     targetFolder: /imports
     folderToImport: ./imports
     readOnly: false
+  source:
+    targetFolder: /src
+    folderToImport: ./src
+    readOnly: false
 activities:
   roslyn:
     image: godeltech/codereview.analyzers.roslyn
     timeout: "1:00:00"
     environment:
-      SOLUTION_FILE_PATH: /imports/{SOLUTION_FILE_PATH}
+      SOLUTION_FILE_PATH: /src/{SOLUTION_FILE_PATH}
   roslyn-converter:
     image: godeltech/codereview.file-converter
     command:

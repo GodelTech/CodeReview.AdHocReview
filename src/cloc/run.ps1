@@ -21,8 +21,9 @@ $tmpFile = New-TemporaryFile
 Write-Host "Running analysis for the $workflow workflow..."
 
 Copy-Item -Path $PSScriptRoot\workflow.yaml  -Destination $tmpFile
+$importDirectoryPath = "$PSScriptRoot\imports"
 
-Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $SolutionDirectoryPath
+Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $importDirectoryPath -sourceDirectoryPath $SolutionDirectoryPath
 
 Write-Host "Removing $tmpFile file"
 Remove-Item $tmpFile
