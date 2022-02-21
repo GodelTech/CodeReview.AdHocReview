@@ -1,6 +1,7 @@
 workflowFilePath=''
 outputDirectoryPath=''
 importDirectoryPath=''
+sourceDirectoryPath=''
 
 while test $# -gt 0; do
   case "$1" in
@@ -17,6 +18,11 @@ while test $# -gt 0; do
   -importDirectoryPath)
     shift
     importDirectoryPath=$1
+    shift
+    ;;
+  -sourceDirectoryPath)
+    shift
+    sourceDirectoryPath=$1
     shift
     ;;
   *)
@@ -36,6 +42,14 @@ fi
 echo "Copy workflow file to the container..."
 if ! docker cp "$workflowFilePath" orchestrator:/app/workflow.yaml; then
   echo "Cannot copy workflow file to the container"
+  docker rm orchestrator
+
+  exit 1
+fi
+
+echo "Copy Copy source directory to the container..."
+if ! docker cp "$sourceDirectoryPath" orchestrator:/app/src; then
+  echo "Cannot copy source directory to the container"
   docker rm orchestrator
 
   exit 1

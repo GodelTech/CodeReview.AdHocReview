@@ -42,8 +42,9 @@ scriptRoot=$(dirname "$0")
 awk "{sub(\"{SOLUTION_FILE_PATH}\",\"$solutionRelativePath\")}1" "$scriptRoot/workflow.yaml" > "$tmpfile"
 
 echo "Running analysis for the roslyn workflow..."
+importDirectoryPath="$scriptRoot/imports"
 
-sh "$scriptRoot"/../common/run-workflow.sh -workflowFilePath  "$tmpfile" -outputDirectoryPath "$outputDirectoryPath" -importDirectoryPath "$solutionDirectoryPath"
+sh "$scriptRoot"/../common/run-workflow.sh -workflowFilePath  "$tmpfile" -outputDirectoryPath "$outputDirectoryPath" -importDirectoryPath "$importDirectoryPath" -sourceDirectoryPath "$solutionDirectoryPath"
 
 echo "Removing $tmpfile file"
 rm "$tmpfile"
