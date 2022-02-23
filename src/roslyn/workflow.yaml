@@ -12,6 +12,31 @@ volumes:
     folderToImport: ./src
     readOnly: false
 activities:
+  cloc:
+    image: aldanial/cloc
+    command:
+      - --by-file
+      - --report-file=/artifacts/stat.cloc.json
+      - --json
+      - /src
+  cloc-converter:
+    image: godeltech/codereview.file-converter
+    command:
+      - cloc
+      - --output
+      - /artifacts/stat-converted.cloc.json
+      - --file
+      - /artifacts/stat.cloc.json
+      - --prefix
+      - /src/
+  cloc-evaluator:
+    image: godeltech/codereview.evaluator
+    command:
+      - import-file-details
+      - --details
+      - /artifacts/stat-converted.cloc.json
+      - --output
+      - /artifacts/roslyn-issues.db
   roslyn:
     image: godeltech/codereview.analyzers.roslyn
     timeout: "1:00:00"
@@ -37,3 +62,38 @@ activities:
       - /artifacts/roslyn-issues.db
       - --issues
       - /artifacts/rolsyn-result.zip
+  roslyn-evaluator-evaluate:
+    image: godeltech/codereview.evaluator
+    command:
+      - evaluate
+      - --db
+      - /artifacts/roslyn-issues.db
+      - --manifest
+      - /imports/evaluator-manifest.yaml
+      - --output
+      - /artifacts/result.json
+  report-template-renderer-liquid:
+    image: godeltech/codereview.template-renderer
+    command:
+      - liquid
+      - --template
+      - /imports/report.html.liquid
+      - --output
+      - /artifacts/report.html
+      - --data
+      - /artifacts/result.json
+  # I am using the following repo docker-html-to-pdf : https://github.com/pinkeen/docker-html-to-pdf
+  # Please make sure it is safe and we can use it for our purpose 
+  # We can fork repo to prevent any unexpected changes
+  # OR we can make our own wrapper for Headless Chrome (https://developers.google.com/web/updates/2017/04/headless-chrome)
+  report-html-to-pdf:
+    image: pink33n/html-to-pdf
+    command:
+      - --url
+      - file:///artifacts/report.html
+      - --pdf
+      - /artifacts/report.pdf
+    volumes:
+      workspace:
+        targetFolder: /workspace
+        readOnly: false

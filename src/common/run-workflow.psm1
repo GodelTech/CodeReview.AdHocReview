@@ -7,7 +7,7 @@ param (
 )
     Write-Host "Creating docker container godeltech/codereview.orchestrator..."
     
-    docker create --name orchestrator -v /var/run/docker.sock:/var/run/docker.sock godeltech/codereview.orchestrator run -f workflow.yaml
+    docker create --name orchestrator -v /var/run/docker.sock:/var/run/docker.sock godeltech/codereview.orchestrator run -f workflow.yaml -b LoadLatest
     if (-not $?) {
         Write-Error -Message "Failed to create a container for the $workflow workflow"
     
