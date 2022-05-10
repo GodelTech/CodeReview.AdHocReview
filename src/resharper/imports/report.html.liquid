@@ -88,23 +88,23 @@
                 spanElement.style.color = "#6FAC47";
             }
             else if (errorIndex >= 4) {
-                spanElement.textContent = "TODO: errorIndex >= 4";
+                spanElement.textContent = "errorIndex >= 4";
                 spanElement.style.color = "#6FAC47";
             }
             else if (errorIndex >= 3) {
-                spanElement.textContent = "TODO: errorIndex >= 3";
+                spanElement.textContent = "errorIndex >= 3";
                 spanElement.style.color = "#6FAC47";
             }
             else if (errorIndex >= 2) {
-                spanElement.textContent = "TODO: errorIndex >= 2";
+                spanElement.textContent = "errorIndex >= 2";
                 spanElement.style.color = "#6FAC47";
             }
             else if (errorIndex >= 1) {
-                spanElement.textContent = "TODO: errorIndex >= 1";
+                spanElement.textContent = "errorIndex >= 1";
                 spanElement.style.color = "#6FAC47";
             }
             else if (errorIndex < 1) {
-                spanElement.textContent = "TODO: errorIndex < 1";
+                spanElement.textContent = "errorIndex < 1";
                 spanElement.style.color = "#6FAC47";
             }
         }
@@ -285,7 +285,7 @@
         {% for issue in topTenFrequentIssues -%}
         <tr>
             <td style='width:52.6pt;border:solid black 1.0pt;border-top:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>TODO: what should be displayed here?</p>
+                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.ruleId }}</p>
             </td>
             <td style='width:52.6pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
                 <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.level }}</p>
@@ -303,7 +303,6 @@
         {% endfor %}
     </table>
 
-    <!-- idk what should be in the table below :( -->
     <h2>Top 10 of most severe issues</h2>
     <p class=MsoNormal>Table below contains list of issues which are considered to be potential defects and require attention:</p>
 
@@ -328,7 +327,7 @@
         {% for issue in topTenSevereIssues -%}
         <tr>
             <td style='width:52.6pt;border:solid black 1.0pt;border-top:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>TODO: what should be displayed here?</p>
+                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.ruleId }}</p>
             </td>
             <td style='width:52.6pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
                 <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.level }}</p>

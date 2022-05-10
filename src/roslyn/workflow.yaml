@@ -82,10 +82,6 @@ activities:
       - /artifacts/report.html
       - --data
       - /artifacts/result.json
-  # I am using the following repo docker-html-to-pdf : https://github.com/pinkeen/docker-html-to-pdf
-  # Please make sure it is safe and we can use it for our purpose 
-  # We can fork repo to prevent any unexpected changes
-  # OR we can make our own wrapper for Headless Chrome (https://developers.google.com/web/updates/2017/04/headless-chrome)
   report-html-to-pdf:
     image: pink33n/html-to-pdf
     command:
