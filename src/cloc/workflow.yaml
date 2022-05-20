@@ -7,6 +7,10 @@ volumes:
     targetFolder: /imports
     folderToImport: ./imports
     readOnly: false
+  source:
+    targetFolder: /src
+    folderToImport: ./src
+    readOnly: true
 activities:
   cloc:
     image: aldanial/cloc
@@ -14,7 +18,7 @@ activities:
       - --by-file
       - --report-file=/artifacts/stat.cloc.json
       - --json
-      - /imports
+      - /src
   cloc-converter:
     image: godeltech/codereview.file-converter
     command:
@@ -24,7 +28,7 @@ activities:
       - --file
       - /artifacts/stat.cloc.json
       - --prefix
-      - /imports/
+      - /src/
   cloc-evaluator:
     image: godeltech/codereview.evaluator
     command:

@@ -34,10 +34,11 @@ tmpfile=$(mktemp)
 scriptRoot=$(dirname "$0")
 
 cp "$scriptRoot/workflow.yaml" "$tmpfile"
+importDirectoryPath="$scriptRoot/imports"
 
 echo "Running analysis for the cloc workflow..."
 
-sh "$scriptRoot"/../common/run-workflow.sh -workflowFilePath  "$tmpfile" -outputDirectoryPath "$outputDirectoryPath" -importDirectoryPath "$solutionDirectoryPath"
+sh "$scriptRoot"/../common/run-workflow.sh -workflowFilePath  "$tmpfile" -outputDirectoryPath "$outputDirectoryPath" -importDirectoryPath "$importDirectoryPath" -sourceDirectoryPath "$solutionDirectoryPath"
 
 echo "Removing $tmpfile file"
 rm "$tmpfile"
