@@ -6,11 +6,10 @@ volumes:
   imports:
     targetFolder: /imports
     folderToImport: ./imports
-  sources:
-    targetFolder: ${var.srcPath}
+  source:
+    targetFolder: /src
+    folderToImport: ./src
     readOnly: false
-variables: 
-  srcPath: /src
 activities:
   owaspDependencyChecker:
     image: godeltech/owasp-dependency-checker
@@ -66,3 +65,14 @@ activities:
       - /artifacts/report.html
       - --data
       - /artifacts/result.json
+  report-html-to-pdf:
+    image: pink33n/html-to-pdf
+    command:
+      - --url
+      - file:///artifacts/report.html
+      - --pdf
+      - /artifacts/report.pdf
+    volumes:
+      workspace:
+        targetFolder: /workspace
+        readOnly: false

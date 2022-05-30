@@ -29,7 +29,9 @@ $tmpFileContent = Get-Content -Path $tmpFile
 $tmpFileContent = $tmpFileContent.Replace('{SOLUTION_FILE_PATH}', $SolutionRelativePath)
 Set-Content -Path $tmpFile -Value $tmpFileContent
 
-Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $SolutionDirectoryPath
+$importDirectoryPath = "$PSScriptRoot\imports"
+
+Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $importDirectoryPath -sourceDirectoryPath $SolutionDirectoryPath
 
 Write-Host "Removing $tmpFile file"
 Remove-Item $tmpFile

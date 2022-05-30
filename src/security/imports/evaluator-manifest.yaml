@@ -21,10 +21,10 @@ requests:
            FROM Issues as i INNER JOIN IssueLocations as il ON i.Id = il.IssueId
            WHERE i.Level = 'Error'
   vulnerableDependencies:
-    query: SELECT i.RuleId, i.Message, i.Description, i.DetailsUrl, il.FilePath, ip.Severity ROW_NUMBER() OVER() AS number
+    query: SELECT i.RuleId, i.Message, i.Description, i.DetailsUrl, ip1.Value as Score, ip2.Value as Severity, il.FilePath, ROW_NUMBER() OVER(ORDER BY ip1.Value DESC) AS number
            FROM Issues as i 
            INNER JOIN IssueLocations as il ON i.Id = il.IssueId
-           INNER JOIN IssueProperties as ip ON i.Id = ip.IssueId
+           INNER JOIN IssueProperties as ip1 ON i.Id = ip1.IssueId AND ip1.Property = 'score'
+           INNER JOIN IssueProperties as ip2 ON i.Id = ip2.IssueId AND ip2.Property = 'severity'
            WHERE i.Level = 'Error'
-           ORDERED BY ip.Property
     type: Collection

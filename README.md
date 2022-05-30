@@ -9,8 +9,9 @@ The analysis folder should contains the following
     `-- cloc <- analysis name
         |   README.md <- contains all information on how to run an analysis
         |   run.ps1   <- script to run an analysis
+        |   run.sh    <- script to run an analysis
         |   workflow.yaml <- analysis workflow
         |
-        `-- imports <- directory to be imported into the container [TODO: not working :)]
+        `-- imports <- directory to be imported into the container
                 .gitkeep
 ```

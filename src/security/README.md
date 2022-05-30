@@ -1,4 +1,4 @@
-# CodeReview.AdHocReview [Roslyn]
+# CodeReview.AdHocReview [Security]
 
 ## Requirements
 
@@ -17,6 +17,6 @@
 
 - Clone [CodeReview.AdHocReview](https://github.com/GodelTech/CodeReview.AdHocReview)
 - Clone [CodeReview.Orchestrator](https://github.com/GodelTech/CodeReview.Orchestrator) (can be any project you want to analyze)
-- Navigate to `CodeReview.AdHockCheck\src\roslyn\` folder
+- Navigate to `CodeReview.AdHockCheck\src\security\` folder
 - Run `.\run.ps1 -SolutionDirectoryPath C:\CodeReview.Orchestrator -SolutionRelativePath CodeReview.Orchestrator.sln -Output C:\output`
 - All artifacts will be copy to the output folder 
