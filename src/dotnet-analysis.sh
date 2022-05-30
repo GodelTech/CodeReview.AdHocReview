@@ -47,3 +47,10 @@ roslynOutputPath="outputDirectoryPath/roslyn"
 sh "$scriptRoot"/roslyn/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$roslynOutputPath" -solutionRelativePath "$solutionRelativePath"
 
 echo "Roslyn analysis completed."
+
+echo "Running owasp dependency check..."
+
+roslynOutputPath="outputDirectoryPath/security"
+sh "$scriptRoot"/security/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$roslynOutputPath" -solutionRelativePath "$solutionRelativePath"
+
+echo "Owasp dependency check analysis completed."

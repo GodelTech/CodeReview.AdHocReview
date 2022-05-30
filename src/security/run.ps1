@@ -21,7 +21,7 @@ IF (-not $?) { exit }
 
 $tmpFile = New-TemporaryFile
 
-Write-Host "Running analysis for the $workflow workflow..."
+Write-Host "Running analysis for the owasp dependency check workflow..."
 
 Copy-Item -Path $PSScriptRoot\workflow.yaml  -Destination $tmpFile
 
