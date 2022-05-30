@@ -29,3 +29,10 @@ $clocOutputPath = "$OutputDirectoryPath\roslyn"
 powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath -SolutionRelativePath $SolutionRelativePath"
 
 Write-Host "Roslyn analysis completed."
+
+Write-Host "Running owasp dependency check..."
+
+$clocOutputPath = "$OutputDirectoryPath\security"
+powershell "$PSScriptRoot\security\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath -SolutionRelativePath $SolutionRelativePath"
+
+Write-Host "Roslyn analysis completed."
