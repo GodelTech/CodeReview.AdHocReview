@@ -1,6 +1,6 @@
 #!/bin/bash
 solutionDirectoryPath=''
-solutionRelativePath=''
+
 outputDirectoryPath=''
 
 while test $# -gt 0; do
@@ -13,11 +13,6 @@ while test $# -gt 0; do
     -outputDirectoryPath)
       shift
       outputDirectoryPath=$1
-      shift
-      ;;
-    -solutionRelativePath)
-      shift
-      solutionRelativePath=$1
       shift
       ;;
   *)
