@@ -32,7 +32,7 @@ Write-Host "Roslyn analysis completed."
 
 Write-Host "Running owasp dependency check..."
 
-$clocOutputPath = "$OutputDirectoryPath\security"
-powershell "$PSScriptRoot\security\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath -SolutionRelativePath $SolutionRelativePath"
+$securityOutputPath = "$OutputDirectoryPath\security"
+powershell "$PSScriptRoot\security\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $securityOutputPath -SolutionRelativePath $SolutionRelativePath"
 
 Write-Host "Owasp dependency check analysis completed."

@@ -23,11 +23,7 @@ $tmpFile = New-TemporaryFile
 
 Write-Host "Running analysis for the owasp dependency check workflow..."
 
-Copy-Item -Path $PSScriptRoot\workflow.yaml  -Destination $tmpFile
-
-$tmpFileContent = Get-Content -Path $tmpFile
-$tmpFileContent = $tmpFileContent.Replace('{SOLUTION_FILE_PATH}', $SolutionRelativePath)
-Set-Content -Path $tmpFile -Value $tmpFileContent
+Copy-Item -Path $PSScriptRoot\workflow.yaml -Destination $tmpFile
 
 $importDirectoryPath = "$PSScriptRoot\imports"
 
