@@ -29,3 +29,10 @@ $roslynOutputPath = "$OutputDirectoryPath\roslyn"
 powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $roslynOutputPath -SolutionRelativePath $SolutionRelativePath"
 
 Write-Host "Roslyn analysis completed."
+
+Write-Host "Running owasp dependency check..."
+
+$securityOutputPath = "$OutputDirectoryPath\security"
+powershell "$PSScriptRoot\security\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $securityOutputPath -SolutionRelativePath $SolutionRelativePath"
+
+Write-Host "Owasp dependency check analysis completed."
