@@ -136,7 +136,7 @@
                 <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Name</p>
             </th>
             <th style='border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ vulnerability.ruleId }}</p>
+                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ vulnerability.ruleId | escape }}</p>
             </th>
         </tr>
         <tr>
@@ -160,7 +160,7 @@
                 <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Cvssv info</p>
             </th>
             <th style='border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ vulnerability.message }}</p>
+                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ vulnerability.message | escape }}</p>
             </th>
         </tr>
         <tr>
@@ -168,7 +168,7 @@
                 <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Description</p>
             </th>
             <th style='border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ vulnerability.description }}</p>
+                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ vulnerability.description | escape }}</p>
             </th>
         </tr>
         <tr>
@@ -176,7 +176,7 @@
                 <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Details url</p>
             </th>
             <th style='border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <a class=MsoNormal style='margin-bottom:0;line-height:normal' href={{ vulnerability.detailsUrl }}>{{ vulnerability.detailsUrl }}</p>
+                <a class=MsoNormal style='margin-bottom:0;line-height:normal' href='{{ vulnerability.detailsUrl }}'>{{ vulnerability.detailsUrl }}</a>
             </th>
         </tr>
         </table>
