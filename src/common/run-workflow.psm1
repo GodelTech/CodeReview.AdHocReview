@@ -44,6 +44,16 @@ param (
         return $False
     }
 
+    Write-Host "Copy nuget directory to the container..."
+    docker cp 'C:\Work\intelliflo\packages' orchestrator:/app/nuget
+    if (-not $?) {
+        Write-Error -Message "Cannot copy nuget directory to the container"
+    
+        docker rm orchestrator
+    
+        return $False
+    }
+
     Write-Host "Running container..."
     docker start -a orchestrator
 

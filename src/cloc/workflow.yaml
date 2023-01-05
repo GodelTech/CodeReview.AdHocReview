@@ -13,7 +13,7 @@ volumes:
     readOnly: true
 activities:
   cloc:
-    image: aldanial/cloc
+    image: aldanial/cloc:1.94
     command:
       - --by-file
       - --report-file=/artifacts/stat.cloc.json
