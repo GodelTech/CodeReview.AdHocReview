@@ -3,10 +3,13 @@ param(
     [string] $SolutionDirectoryPath,
 
     [Parameter(Mandatory=$True)]
-    [string] $OutputDirectoryPath,
+    [string] $SolutionRelativePath,
 
     [Parameter(Mandatory=$True)]
-    [string] $SolutionRelativePath
+    [string] $OutputDirectoryPath,
+
+    [Parameter(Mandatory=$False)]
+    [string] $NugetConfigFilePath = $null
 )
 
 Write-Host "Running cloc..."

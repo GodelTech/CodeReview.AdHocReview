@@ -3,10 +3,19 @@ param(
     [string] $SolutionDirectoryPath,
 
     [Parameter(Mandatory=$True)]
-    [string] $OutputDirectoryPath,
+    [string] $SolutionRelativePath,
 
     [Parameter(Mandatory=$True)]
-    [string] $SolutionRelativePath
+    [string] $OutputDirectoryPath,
+
+    [Parameter(Mandatory=$False)]
+    [string] $NugetPackagesSource = $null,
+
+    [Parameter(Mandatory=$False)]
+    [string] $NugetPackagesSourceUserName = $null,
+
+    [Parameter(Mandatory=$False)]
+    [SecureString] $NugetPackagesSourcePassword = $null
 )
 
 Import-Module "$PSScriptRoot\..\common\run-workflow.psm1" -Force

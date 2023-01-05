@@ -2,6 +2,7 @@ workflowFilePath=''
 outputDirectoryPath=''
 importDirectoryPath=''
 sourceDirectoryPath=''
+nugetConfigFilePath = ''
 
 while test $# -gt 0; do
   case "$1" in
@@ -25,6 +26,11 @@ while test $# -gt 0; do
     sourceDirectoryPath=$1
     shift
     ;;
+  -nugetConfigFilePath)
+      shift
+      nugetConfigFilePath=$1
+      shift
+      ;;
   *)
     break
     ;;
@@ -39,28 +45,39 @@ if ! docker create --name orchestrator -v /var/run/docker.sock:/var/run/docker.s
   exit 1
 fi
 
-echo "Copy workflow file to the container..."
+echo "Copy $workflowFilePath to the container..."
 if ! docker cp "$workflowFilePath" orchestrator:/app/workflow.yaml; then
-  echo "Cannot copy workflow file to the container"
+  echo "Cannot copy $workflowFilePath to the container"
   docker rm orchestrator
 
   exit 1
 fi
 
-echo "Copy Copy source directory to the container..."
+echo "Copy $sourceDirectoryPath to the container..."
 if ! docker cp "$sourceDirectoryPath" orchestrator:/app/src; then
-  echo "Cannot copy source directory to the container"
+  echo "Cannot $sourceDirectoryPath to the container"
   docker rm orchestrator
 
   exit 1
 fi
 
-echo "Copy import directory to the container..."
+echo "Copy $importDirectoryPath to the container..."
 if ! docker cp "$importDirectoryPath" orchestrator:/app/imports; then
-  echo "Cannot copy solution directory to the container"
+  echo "Cannot copy $importDirectoryPath to the container"
   docker rm orchestrator
 
   exit 1
+fi
+
+if [$nugetConfigFilePath != '']; then
+  echo "Copy $nugetConfigFilePath to the container..."
+
+  if ! docker cp "$nugetConfigFilePath" orchestrator:/app/src; then
+    echo "Cannot copy $nugetConfigFilePath to the container"
+    docker rm orchestrator
+
+    exit 1
+  fi
 fi
 
 echo "Running container..."
