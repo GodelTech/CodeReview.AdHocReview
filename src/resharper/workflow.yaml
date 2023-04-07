@@ -1,8 +1,4 @@
 volumes:
-  nuget:
-    targetFolder: /nuget/packages
-    folderToImport: ./nuget
-    readOnly: false
   artifacts:
     targetFolder: /artifacts
     folderToOutput: ./artifacts

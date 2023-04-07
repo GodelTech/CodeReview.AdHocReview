@@ -15,7 +15,7 @@ param(
 Write-Host "Running cloc..."
 
 $clocOutputPath = "$OutputDirectoryPath\cloc"
-powershell "$PSScriptRoot\cloc\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath"
+powershell "$PSScriptRoot\cloc\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath -NugetConfigFilePath $NugetConfigFilePath"
 
 Write-Host "Cloc analysis completed."
 

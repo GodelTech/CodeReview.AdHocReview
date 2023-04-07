@@ -3,7 +3,10 @@ param(
     [string] $SolutionDirectoryPath,
 
     [Parameter(Mandatory=$True)]
-    [string] $OutputDirectoryPath
+    [string] $OutputDirectoryPath,
+
+    [Parameter(Mandatory=$False)]
+    [string] $NugetConfigFilePath = $null
 )
 
 Import-Module "$PSScriptRoot\..\common\run-workflow.psm1" -Force
@@ -23,7 +26,7 @@ Write-Host "Running analysis for the $workflow workflow..."
 Copy-Item -Path $PSScriptRoot\workflow.yaml  -Destination $tmpFile
 $importDirectoryPath = "$PSScriptRoot\imports"
 
-Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $importDirectoryPath -sourceDirectoryPath $SolutionDirectoryPath
+Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $importDirectoryPath -sourceDirectoryPath $SolutionDirectoryPath -nugetConfigFilePath $NugetConfigFilePath
 
 Write-Host "Removing $tmpFile file"
 Remove-Item $tmpFile
