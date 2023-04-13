@@ -13,7 +13,7 @@ volumes:
     readOnly: false
 activities:
   cloc:
-    image: aldanial/cloc:1.94
+    image: aldanial/cloc
     command:
       - --by-file
       - --report-file=/artifacts/stat.cloc.json
@@ -42,7 +42,6 @@ activities:
     timeout: "1:00:00"
     environment:
       SOLUTION_FILE_PATH: /src/{SOLUTION_FILE_PATH}
-      NUGET_PACKAGES: /nuget/packages
   resharper-file-converter-resharper:
     image: godeltech/codereview.file-converter
     command:

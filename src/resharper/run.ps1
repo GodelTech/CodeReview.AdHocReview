@@ -9,13 +9,7 @@ param(
     [string] $OutputDirectoryPath,
 
     [Parameter(Mandatory=$False)]
-    [string] $NugetPackagesSource = $null,
-
-    [Parameter(Mandatory=$False)]
-    [string] $NugetPackagesSourceUserName = $null,
-
-    [Parameter(Mandatory=$False)]
-    [SecureString] $NugetPackagesSourcePassword = $null
+    [string] $NugetConfigFilePath = $null
 )
 
 Import-Module "$PSScriptRoot\..\common\run-workflow.psm1" -Force
@@ -40,7 +34,12 @@ Set-Content -Path $tmpFile -Value $tmpFileContent
 
 $importDirectoryPath = "$PSScriptRoot\imports"
 
-Start-Orchestrator -workflowFilePath $tmpFile -outputDirectoryPath $OutputDirectoryPath -importDirectoryPath $importDirectoryPath -sourceDirectoryPath $SolutionDirectoryPath
+Start-Orchestrator `
+    -workflowFilePath $tmpFile `
+    -outputDirectoryPath $OutputDirectoryPath `
+    -importDirectoryPath $importDirectoryPath `
+    -sourceDirectoryPath $SolutionDirectoryPath `
+    -nugetConfigFilePath $NugetConfigFilePath
 
 Write-Host "Removing $tmpFile file"
 Remove-Item $tmpFile
