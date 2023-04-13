@@ -2,6 +2,7 @@
 solutionDirectoryPath=''
 solutionRelativePath=''
 outputDirectoryPath=''
+nugetConfigFilePath = ''
 
 while test $# -gt 0; do
   case "$1" in
@@ -18,6 +19,11 @@ while test $# -gt 0; do
     -solutionRelativePath)
       shift
       solutionRelativePath=$1
+      shift
+      ;;
+    -nugetConfigFilePath)
+      shift
+      nugetConfigFilePath=$1
       shift
       ;;
   *)
@@ -44,7 +50,7 @@ importDirectoryPath="$scriptRoot/imports"
 
 echo "Running analysis for the resharper workflow..."
 
-sh "$scriptRoot"/../common/run-workflow.sh -workflowFilePath  "$tmpfile" -outputDirectoryPath "$outputDirectoryPath" -importDirectoryPath "$importDirectoryPath" -sourceDirectoryPath "$solutionDirectoryPath"
+sh "$scriptRoot"/../common/run-workflow.sh -workflowFilePath  "$tmpfile" -outputDirectoryPath "$outputDirectoryPath" -importDirectoryPath "$importDirectoryPath" -sourceDirectoryPath "$solutionDirectoryPath" -nugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Removing $tmpfile file"
 rm "$tmpfile"

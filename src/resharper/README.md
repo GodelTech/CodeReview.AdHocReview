@@ -7,11 +7,12 @@
 
 ## Command Arguments
 
-| Arguments             | Required | Type   | Description argument               |
-|-----------------------|----------|--------|------------------------------------|
-| SolutionDirectoryPath | True     | String | Path to the solution folder        |
-| SolutionRelativePath  | True     | String | Relative path to the solution file |
-| Output                | True     | String | Path to the output directory       |
+| Arguments                  | Required | Type   | Description argument                                                          |
+|----------------------------|----------|--------|-------------------------------------------------------------------------------|
+| SolutionDirectoryPath      | True     | String | Path to the solution folder                                                   |
+| SolutionRelativePath       | True     | String | Relative path to the solution file                                            |
+| Output                     | True     | String | Path to the output directory                                                  |
+| NugetConfigFilePath        | False    | String | Path to the nuget packages directory (can be used in case of private sources) |
 
 ## Example
 

@@ -2,6 +2,7 @@
 solutionDirectoryPath=''
 solutionRelativePath=''
 outputDirectoryPath=''
+nugetConfigFilePath = ''
 
 while test $# -gt 0; do
   case "$1" in
@@ -18,6 +19,11 @@ while test $# -gt 0; do
     -solutionRelativePath)
       shift
       solutionRelativePath=$1
+      shift
+      ;;
+    -nugetConfigFilePath)
+      shift
+      nugetConfigFilePath=$1
       shift
       ;;
   *)
@@ -37,14 +43,14 @@ echo "Cloc analysis completed."
 echo "Running resharper..."
 
 resharperOutputPath="$outputDirectoryPath/resharper"
-sh "$scriptRoot"/resharper/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$resharperOutputPath" -solutionRelativePath "$solutionRelativePath"
+sh "$scriptRoot"/resharper/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$resharperOutputPath" -solutionRelativePath "$solutionRelativePath" -nugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Resharper analysis completed."
 
 echo "Running roslyn..."
 
 roslynOutputPath="outputDirectoryPath/roslyn"
-sh "$scriptRoot"/roslyn/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$roslynOutputPath" -solutionRelativePath "$solutionRelativePath"
+sh "$scriptRoot"/roslyn/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$roslynOutputPath" -solutionRelativePath "$solutionRelativePath" -nugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Roslyn analysis completed."
 
