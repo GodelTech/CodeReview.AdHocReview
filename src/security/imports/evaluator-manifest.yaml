@@ -1,23 +1,23 @@
 requests:
-  totalNumberOfVulnarabilities:
+  totalNumberOfVulnerabilities:
     query: SELECT COUNT(1) FROM Issues WHERE Level = 'Error'
-  totalNumberOfLowVulnarabilities:
-    query: SELECT COUNT(*) AS totalNumberOfValnurableDependencies
+  totalNumberOfLowVulnerabilities:
+    query: SELECT COUNT(*) AS totalNumberOfVulnerableDependencies
            FROM Issues as i INNER JOIN IssueProperties as ip ON i.Id = ip.IssueId
            WHERE i.Level = 'Error' AND ip.Property = 'score' AND ip.Value <= 4
-  totalNumberOfMediumVulnarabilities:
-    query: SELECT COUNT(*) AS totalNumberOfValnurableDependencies
+  totalNumberOfMediumVulnerabilities:
+    query: SELECT COUNT(*) AS totalNumberOfVulnerableDependencies
            FROM Issues as i INNER JOIN IssueProperties as ip ON i.Id = ip.IssueId
            WHERE i.Level = 'Error' AND ip.Property = 'score' AND ip.Value > 4 AND ip.Value <= 8
-  totalNumberOfHighVulnarabilities:
-    query: SELECT COUNT(*) AS totalNumberOfValnurableDependencies
+  totalNumberOfHighVulnerabilities:
+    query: SELECT COUNT(*) AS totalNumberOfVulnerableDependencies
            FROM Issues as i INNER JOIN IssueProperties as ip ON i.Id = ip.IssueId
            WHERE i.Level = 'Error' AND ip.Property = 'score' AND ip.Value > 8
   totalNumberOfDependencies:
-    query: SELECT COUNT(DISTINCT il.FilePath) AS totalNumberOfValnurableDependencies
+    query: SELECT COUNT(DISTINCT il.FilePath) AS totalNumberOfVulnerableDependencies
            FROM Issues as i INNER JOIN IssueLocations as il ON i.Id = il.IssueId
-  totalNumberOfVulnarabelDependencies:
-    query: SELECT COUNT(DISTINCT il.FilePath) AS totalNumberOfValnurableDependencies
+  totalNumberOfVulnerableDependencies:
+    query: SELECT COUNT(DISTINCT il.FilePath) AS totalNumberOfVulnerableDependencies
            FROM Issues as i INNER JOIN IssueLocations as il ON i.Id = il.IssueId
            WHERE i.Level = 'Error'
   vulnerableDependencies:
