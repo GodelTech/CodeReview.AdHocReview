@@ -12,13 +12,6 @@ param(
     [string] $NugetConfigFilePath = $null
 )
 
-Write-Host "Running cloc..."
-
-$clocOutputPath = "$OutputDirectoryPath\cloc"
-powershell "$PSScriptRoot\cloc\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath"
-
-Write-Host "Cloc analysis completed."
-
 Write-Host "Running resharper..."
 
 $resharperOutputPath = "$OutputDirectoryPath\resharper"

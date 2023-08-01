@@ -33,12 +33,6 @@ while test $# -gt 0; do
 done
 
 scriptRoot=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-echo "Running cloc..."
-
-clocOutputPath="$outputDirectoryPath/cloc"
-sh "$scriptRoot"/cloc/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$clocOutputPath"
-
-echo "Cloc analysis completed."
 
 echo "Running resharper..."
 
