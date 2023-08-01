@@ -34,6 +34,8 @@ fi
 tmpfile=$(mktemp)
 scriptRoot=$(dirname "$0")
 
+cp "$scriptRoot/workflow.yaml" "$tmpfile"
+
 echo "Running analysis for the owasp dependency check workflow..."
 importDirectoryPath="$scriptRoot/imports"
 
