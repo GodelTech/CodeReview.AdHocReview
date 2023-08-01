@@ -2,7 +2,7 @@ workflowFilePath=''
 outputDirectoryPath=''
 importDirectoryPath=''
 sourceDirectoryPath=''
-nugetConfigFilePath = ''
+nugetConfigFilePath=''
 
 while test $# -gt 0; do
   case "$1" in
@@ -69,7 +69,7 @@ if ! docker cp "$importDirectoryPath" orchestrator:/app/imports; then
   exit 1
 fi
 
-if [$nugetConfigFilePath != '']; then
+if [ ! -z "$nugetConfigFilePath" ]; then
   echo "Copy $nugetConfigFilePath to the container..."
 
   if ! docker cp "$nugetConfigFilePath" orchestrator:/app/src; then

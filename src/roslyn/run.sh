@@ -2,7 +2,7 @@
 solutionDirectoryPath=''
 solutionRelativePath=''
 outputDirectoryPath=''
-nugetConfigFilePath = ''
+nugetConfigFilePath=''
 
 while test $# -gt 0; do
   case "$1" in

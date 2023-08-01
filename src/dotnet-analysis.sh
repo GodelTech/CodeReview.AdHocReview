@@ -2,7 +2,7 @@
 solutionDirectoryPath=''
 solutionRelativePath=''
 outputDirectoryPath=''
-nugetConfigFilePath = ''
+nugetConfigFilePath=''
 
 while test $# -gt 0; do
   case "$1" in
@@ -43,20 +43,22 @@ echo "Cloc analysis completed."
 echo "Running resharper..."
 
 resharperOutputPath="$outputDirectoryPath/resharper"
+
 sh "$scriptRoot"/resharper/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$resharperOutputPath" -solutionRelativePath "$solutionRelativePath" -nugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Resharper analysis completed."
 
 echo "Running roslyn..."
 
-roslynOutputPath="outputDirectoryPath/roslyn"
+roslynOutputPath="$outputDirectoryPath/roslyn"
+
 sh "$scriptRoot"/roslyn/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$roslynOutputPath" -solutionRelativePath "$solutionRelativePath" -nugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Roslyn analysis completed."
 
 echo "Running owasp dependency check..."
 
-securityOutputPath="outputDirectoryPath/security"
+securityOutputPath="$outputDirectoryPath/security"
 sh "$scriptRoot"/security/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$securityOutputPath"
 
 echo "Owasp dependency check analysis completed."

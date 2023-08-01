@@ -15,21 +15,32 @@ param(
 Write-Host "Running cloc..."
 
 $clocOutputPath = "$OutputDirectoryPath\cloc"
-powershell "$PSScriptRoot\cloc\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath -NugetConfigFilePath $NugetConfigFilePath"
+powershell "$PSScriptRoot\cloc\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $clocOutputPath"
 
 Write-Host "Cloc analysis completed."
 
 Write-Host "Running resharper..."
 
 $resharperOutputPath = "$OutputDirectoryPath\resharper"
-powershell "$PSScriptRoot\resharper\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $resharperOutputPath -SolutionRelativePath $SolutionRelativePath"
+
+if ([string]::IsNullOrEmpty($NugetConfigFilePath)) {
+    powershell "$PSScriptRoot\resharper\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $resharperOutputPath -SolutionRelativePath $SolutionRelativePath"
+}
+else {
+    powershell "$PSScriptRoot\resharper\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $resharperOutputPath -SolutionRelativePath $SolutionRelativePath -NugetConfigFilePath $NugetConfigFilePath"
+}
 
 Write-Host "Resharper analysis completed."
 
 Write-Host "Running roslyn..."
 
 $roslynOutputPath = "$OutputDirectoryPath\roslyn"
-powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $roslynOutputPath -SolutionRelativePath $SolutionRelativePath"
+if ([string]::IsNullOrEmpty($NugetConfigFilePath)) {
+    powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $resharperOutputPath -SolutionRelativePath $SolutionRelativePath"
+}
+else {
+    powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $roslynOutputPath -SolutionRelativePath $SolutionRelativePath -NugetConfigFilePath $NugetConfigFilePath"
+}
 
 Write-Host "Roslyn analysis completed."
 
