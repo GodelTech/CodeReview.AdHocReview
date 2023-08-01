@@ -6,22 +6,22 @@ nugetConfigFilePath=''
 
 while test $# -gt 0; do
   case "$1" in
-    -solutionDirectoryPath)
+    -SolutionDirectoryPath)
       shift
       solutionDirectoryPath=$1
       shift
       ;;
-    -outputDirectoryPath)
+    -Output)
       shift
       outputDirectoryPath=$1
       shift
       ;;
-    -solutionRelativePath)
+    -SolutionRelativePath)
       shift
       solutionRelativePath=$1
       shift
       ;;
-    -nugetConfigFilePath)
+    -NugetConfigFilePath)
       shift
       nugetConfigFilePath=$1
       shift
