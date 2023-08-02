@@ -8,23 +8,23 @@
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawCharts);
         function drawCharts() {
-            drawVulnarabilitiesChart();
+            drawVulnerabilitiesChart();
             drawDependenciesChart();
         }
         
-        function drawVulnarabilitiesChart() {
-            const totalCount = {{ totalNumberOfLowVulnarabilities }} + {{ totalNumberOfMediumVulnarabilities }} + {{ totalNumberOfHighVulnarabilities }};
+        function drawVulnerabilitiesChart() {
+            const totalCount = {{ totalNumberOfLowVulnerabilities }} + {{ totalNumberOfMediumVulnerabilities }} + {{ totalNumberOfHighVulnerabilities }};
             const array = [
                 ['BaseScore', 'Value'],
-                ['0 - 4', {{ totalNumberOfLowVulnarabilities }}],
-                ['4 - 8', {{ totalNumberOfMediumVulnarabilities }}],
-                ['8 - 10', {{ totalNumberOfHighVulnarabilities }}],
+                ['0 - 4', {{ totalNumberOfLowVulnerabilities }}],
+                ['4 - 8', {{ totalNumberOfMediumVulnerabilities }}],
+                ['8 - 10', {{ totalNumberOfHighVulnerabilities }}],
             ];
             const data = google.visualization.arrayToDataTable(array);
             const options = {
-                title: 'Score rates for vulnarabilities'
+                title: 'Score rates for vulnerabilities'
             };
-            const chart = new google.visualization.PieChart(document.getElementById('vulnarabilities-rate-piechart'));
+            const chart = new google.visualization.PieChart(document.getElementById('vulnerabilities-rate-piechart'));
             chart.draw(data, options);
         }
 
@@ -32,12 +32,12 @@
             const totalCount = {{ totalNumberOfDependencies }};
             const array = [
                 ['Type', 'Number'],
-                ['Healthy', {{ totalNumberOfDependencies }} - {{ totalNumberOfVulnarabelDependencies }}],
-                ['Vulnarable', {{ totalNumberOfVulnarabelDependencies }}],
+                ['Healthy', {{ totalNumberOfDependencies }} - {{ totalNumberOfVulnerableDependencies }}],
+                ['Vulnerable', {{ totalNumberOfVulnerableDependencies }}],
             ];
             const data = google.visualization.arrayToDataTable(array);
             const options = {
-                title: 'Rate of vulnarable dependencies'
+                title: 'Rate of vulnerable dependencies'
             };
             const chart = new google.visualization.PieChart(document.getElementById('dependencies-rate-piechart'));
             chart.draw(data, options);
@@ -108,14 +108,14 @@
 <div class=WordSection1>
     <h1>Overview of Report</h1>
     
-    <p class=MsoNormal>This report contains details of project dependencie's vulnarability. OWASP Dependency check was used to find vulnarable dependencies.</p>
+    <p class=MsoNormal>This report contains details of project dependencies vulnerability. OWASP Dependency check was used to find vulnerable dependencies.</p>
     
     <h2>General information</h2>
     <p class=MsoNormal>
         <b>Total number of dependencies:</b> {{ totalNumberOfDependencies }}
     </p>
     <p class=MsoNormal>
-        <b>Total number of vulnarabilities:</b> {{ totalNumberOfVulnarabilities }}
+        <b>Total number of vulnerabilities:</b> {{ totalNumberOfVulnerabilities }}
     </p>
     <table>
 	    <tr>
@@ -123,11 +123,11 @@
                 <div id="dependencies-rate-piechart" style="width: 450px; height: 350px;"></div>
             </th>
             <th>
-                <div id="vulnarabilities-rate-piechart" style="width: 450px; height: 350px;"></div>
+                <div id="vulnerabilities-rate-piechart" style="width: 450px; height: 350px;"></div>
             </th>
         </tr>
 	</table>
-    <h2 class=MsoNormal>Vulnarable dependencies</h2>
+    <h2 class=MsoNormal>Vulnerable dependencies</h2>
     {% for vulnerability in vulnerableDependencies -%}
     <p># {{ vulnerability.number }}</p>
     <table class=MsoTableGrid style='width: 900px;margin: 12.0pt 0 0;border-collapse:collapse;border:none'>
