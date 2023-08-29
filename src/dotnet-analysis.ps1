@@ -15,7 +15,6 @@ param(
 Write-Host "Running resharper..."
 
 $resharperOutputPath = "$OutputDirectoryPath\resharper"
-
 if ([string]::IsNullOrEmpty($NugetConfigFilePath)) {
     powershell "$PSScriptRoot\resharper\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $resharperOutputPath -SolutionRelativePath $SolutionRelativePath"
 }
@@ -29,7 +28,7 @@ Write-Host "Running roslyn..."
 
 $roslynOutputPath = "$OutputDirectoryPath\roslyn"
 if ([string]::IsNullOrEmpty($NugetConfigFilePath)) {
-    powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $resharperOutputPath -SolutionRelativePath $SolutionRelativePath"
+    powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $roslynOutputPath -SolutionRelativePath $SolutionRelativePath"
 }
 else {
     powershell "$PSScriptRoot\roslyn\run.ps1 -SolutionDirectoryPath $SolutionDirectoryPath -OutputDirectoryPath $roslynOutputPath -SolutionRelativePath $SolutionRelativePath -NugetConfigFilePath $NugetConfigFilePath"
