@@ -5,12 +5,12 @@ outputDirectoryPath=''
 
 while test $# -gt 0; do
   case "$1" in
-    -solutionDirectoryPath)
+    -SolutionDirectoryPath)
       shift
       solutionDirectoryPath=$1
       shift
       ;;
-    -outputDirectoryPath)
+    -Output)
       shift
       outputDirectoryPath=$1
       shift
@@ -33,6 +33,8 @@ fi
 
 tmpfile=$(mktemp)
 scriptRoot=$(dirname "$0")
+
+cp "$scriptRoot/workflow.yaml" "$tmpfile"
 
 echo "Running analysis for the owasp dependency check workflow..."
 importDirectoryPath="$scriptRoot/imports"

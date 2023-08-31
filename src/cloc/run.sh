@@ -4,12 +4,12 @@ outputDirectoryPath=''
 
 while test $# -gt 0; do
   case "$1" in
-    -solutionDirectoryPath)
+    -SolutionDirectoryPath)
       shift
       solutionDirectoryPath=$1
       shift
       ;;
-    -outputDirectoryPath)
+    -OutputDirectoryPath)
       shift
       outputDirectoryPath=$1
       shift

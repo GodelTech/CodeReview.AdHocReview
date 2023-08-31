@@ -2,26 +2,26 @@
 solutionDirectoryPath=''
 solutionRelativePath=''
 outputDirectoryPath=''
-nugetConfigFilePath = ''
+nugetConfigFilePath=''
 
 while test $# -gt 0; do
   case "$1" in
-    -solutionDirectoryPath)
+    -SolutionDirectoryPath)
       shift
       solutionDirectoryPath=$1
       shift
       ;;
-    -outputDirectoryPath)
+    -Output)
       shift
       outputDirectoryPath=$1
       shift
       ;;
-    -solutionRelativePath)
+    -SolutionRelativePath)
       shift
       solutionRelativePath=$1
       shift
       ;;
-    -nugetConfigFilePath)
+    -NugetConfigFilePath)
       shift
       nugetConfigFilePath=$1
       shift
@@ -33,30 +33,26 @@ while test $# -gt 0; do
 done
 
 scriptRoot=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-echo "Running cloc..."
-
-clocOutputPath="$outputDirectoryPath/cloc"
-sh "$scriptRoot"/cloc/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$clocOutputPath"
-
-echo "Cloc analysis completed."
 
 echo "Running resharper..."
 
 resharperOutputPath="$outputDirectoryPath/resharper"
-sh "$scriptRoot"/resharper/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$resharperOutputPath" -solutionRelativePath "$solutionRelativePath" -nugetConfigFilePath "$nugetConfigFilePath"
+
+sh "$scriptRoot"/resharper/run.sh -SolutionDirectoryPath "$solutionDirectoryPath" -Output "$resharperOutputPath" -SolutionRelativePath "$solutionRelativePath" -NugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Resharper analysis completed."
 
 echo "Running roslyn..."
 
-roslynOutputPath="outputDirectoryPath/roslyn"
-sh "$scriptRoot"/roslyn/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$roslynOutputPath" -solutionRelativePath "$solutionRelativePath" -nugetConfigFilePath "$nugetConfigFilePath"
+roslynOutputPath="$outputDirectoryPath/roslyn"
+
+sh "$scriptRoot"/roslyn/run.sh -SolutionDirectoryPath "$solutionDirectoryPath" -Output "$roslynOutputPath" -SolutionRelativePath "$solutionRelativePath" -NugetConfigFilePath "$nugetConfigFilePath"
 
 echo "Roslyn analysis completed."
 
 echo "Running owasp dependency check..."
 
-securityOutputPath="outputDirectoryPath/security"
-sh "$scriptRoot"/security/run.sh -solutionDirectoryPath "$solutionDirectoryPath" -outputDirectoryPath "$securityOutputPath"
+securityOutputPath="$outputDirectoryPath/security"
+sh "$scriptRoot"/security/run.sh -SolutionDirectoryPath "$solutionDirectoryPath" -Output "$securityOutputPath"
 
 echo "Owasp dependency check analysis completed."
