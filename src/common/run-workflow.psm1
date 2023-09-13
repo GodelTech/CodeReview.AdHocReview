@@ -54,6 +54,9 @@ param (
     Write-Host "Exporting artifacts..."
     docker cp orchestrator:/app/artifacts $outputDirectoryPath
 
+    Write-Host "Exporting reports..."
+    docker cp orchestrator:/app/reports $outputDirectoryPath
+
     Write-Host "Removing container..."
     docker rm orchestrator
 
@@ -63,17 +66,17 @@ param (
 function CopyToContainer {
 param (
     [Parameter(Mandatory=$True)]
-    [string] $direcoryPath,
+    [string] $directoryPath,
 
     [Parameter(Mandatory=$True)]
     [string] $targetPath
 )
-    Write-Host "Copy $direcoryPath to the container..."
+    Write-Host "Copy $directoryPath to the container..."
 
-    docker cp $direcoryPath orchestrator:$targetPath
+    docker cp $directoryPath orchestrator:$targetPath
 
     if (-not $?) {
-        Write-Error -Message "Cannot copy $direcoryPath to the container"
+        Write-Error -Message "Cannot copy $directoryPath to the container"
 
         docker rm orchestrator
 

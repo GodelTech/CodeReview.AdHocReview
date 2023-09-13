@@ -1,0 +1,94 @@
+queries:
+  issueCountByLevel:
+    query:
+      SELECT COUNT(1) FROM Issues
+      WHERE Level = $Level
+requests:
+
+  highIssuesCount:
+    queryRef: issueCountByLevel
+    type: Scalar
+    parameters:
+      Level: Error
+
+  mediumIssuesCount:
+    queryRef: issueCountByLevel
+    type: Scalar
+    parameters:
+      Level: Warning
+
+  lowIssuesCount:
+    queryRef: issueCountByLevel
+    type: Scalar
+    parameters:
+      Level: Info
+
+  totalCodeCount:
+    query:
+      SELECT SUM(Code) FROM FileDetails
+      WHERE Language IN ('C#', 'cshtml')
+    type: Scalar
+
+  avgFileSize:
+    query:
+      SELECT CAST(AVG(Code) AS INTEGER) as value FROM FileDetails
+      WHERE Language IN ('C#', 'cshtml')
+    type: Scalar
+
+  avgFileSizeTitle:
+    query:
+      SELECT CAST(AVG(Code) AS INTEGER) as value FROM FileDetails
+      WHERE Language IN ('C#', 'cshtml')
+    ranges:
+      File size is good:
+        end: 199
+      File size is acceptable but should be moved to smaller numbers:
+        start: 200
+        end: 1999
+      File size is considered to be unmaintainable:
+        start: 2000
+
+  topFiveLanguages:
+    query:
+      SELECT Language, count(1) AS count FROM FileDetails
+      GROUP BY Language
+      ORDER BY count DESC
+      LIMIT 5
+    type: Collection
+
+  topFiveSevereIssues:
+    query:
+      SELECT
+        COUNT(1) as Count,
+        RuleId,
+        Level,
+        CASE Level
+          WHEN 'Error' THEN 3
+          WHEN 'Warning' THEN 2
+          WHEN 'Info' THEN 1
+          ELSE 0
+        END Severity,
+        Title,
+        Description
+      FROM Issues
+      GROUP BY RuleId
+      ORDER BY Severity DESC, Count DESC
+      LIMIT 5
+    type: Collection
+
+  topFiveFrequentIssues:
+    query:
+      SELECT Count(1) as Count, RuleId, Level, Title, Description FROM Issues
+      GROUP BY RuleId
+      ORDER BY Count DESC LIMIT 5
+    type: Collection
+
+  fileSizeRanges:
+    query:
+      SELECT count(1) as count, '< 200' as range, '#8dceab' as color, 0 as o FROM FileDetails WHERE Code < 200
+      UNION
+      SELECT count(1) as count, '< 2000' as range, '#fdd881' as color, 1 as o FROM FileDetails WHERE Code < 2000
+      UNION
+      SELECT count(1) as count, '> 2000' as range, '#e44c64' as color, 2 as o FROM FileDetails WHERE Code > 2000
+      ORDER BY o
+    type: Collection

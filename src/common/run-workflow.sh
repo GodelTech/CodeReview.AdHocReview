@@ -86,6 +86,9 @@ docker start -a orchestrator
 echo "Exporting artifacts..."
 docker cp orchestrator:/app/artifacts "$outputDirectoryPath"
 
+echo "Exporting reports..."
+docker cp orchestrator:/app/reports "$outputDirectoryPath"
+
 echo "Removing container..."
 docker rm orchestrator
 
