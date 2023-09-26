@@ -11,6 +11,10 @@ volumes:
     targetFolder: /src
     folderToImport: ./src
     readOnly: false
+  reports:
+    targetFolder: /reports
+    folderToOutput: ./reports
+    readOnly: false
 activities:
   cloc:
     image: aldanial/cloc
@@ -75,17 +79,26 @@ activities:
       - --template
       - /imports/report.html.liquid
       - --output
-      - /artifacts/report.html
+      - /reports/full-report.html
       - --data
       - /artifacts/result.json
-  report-html-to-pdf:
-    image: pink33n/html-to-pdf
+  trimmed-resharper-evaluator-evaluate:
+    image: godeltech/codereview.evaluator
     command:
-      - --url
-      - file:///artifacts/report.html
-      - --pdf
-      - /artifacts/report.pdf
-    volumes:
-      workspace:
-        targetFolder: /workspace
-        readOnly: false
+      - evaluate
+      - --db
+      - /artifacts/resharper-issues.db
+      - --manifest
+      - /imports/trimmed-evaluator-manifest.yaml
+      - --output
+      - /artifacts/trimmed-result.json
+  trimmed-report-template-renderer-liquid:
+    image: godeltech/codereview.template-renderer
+    command:
+      - liquid
+      - --template
+      - /imports/trimmed-report.html.liquid
+      - --output
+      - /reports/trimmed-report.html
+      - --data
+      - /artifacts/trimmed-result.json
