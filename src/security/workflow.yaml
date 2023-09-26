@@ -69,3 +69,23 @@ activities:
       - /reports/full-report.html
       - --data
       - /artifacts/result.json
+  trimmed-owaspDependencyChecker-evaluator-evaluate:
+    image: godeltech/codereview.evaluator
+    command:
+      - evaluate
+      - --db
+      - /artifacts/owaspDependencyChecker-result.db
+      - --manifest
+      - /imports/trimmed-evaluator-manifest.yaml
+      - --output
+      - /artifacts/trimmed-result.json
+  trimmed-report-template-renderer-liquid:
+    image: godeltech/codereview.template-renderer
+    command:
+      - liquid
+      - --template
+      - /imports/trimmed-report.html.liquid
+      - --output
+      - /reports/trimmed-report.html
+      - --data
+      - /artifacts/trimmed-result.json

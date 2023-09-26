@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+        const totalNumberOfVulnerabilities = {{ totalNumberOfVulnerabilities }};
+        const totalNumberOfDependencies = {{ totalNumberOfDependencies }};
+
+        google.charts.load('current', {'packages':['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function getVulnerabilityScoreData() {
+            return [
+                ['Severity', 'Score', { role: 'style' }],
+                {% for vulnerabilityScore in vulnerabilityScores -%}
+                    ['{{ vulnerabilityScore.range }}', {{ vulnerabilityScore.count }}, '{{ vulnerabilityScore.color }}'],
+                {% endfor -%}
+            ];
+        }
+        
+        function drawCharts() {
+            drawVulnerabilityRateChart();
+            drawVulnerabilityScoreChart();
+        }
+
+        function drawVulnerabilityRateChart() {
+            const dataArray = [
+                ['Severity', 'Count'],
+                ['Vulnerable', totalNumberOfVulnerabilities],
+                ['Healthy', totalNumberOfDependencies],
+            ];
+
+            const dataTable = new google.visualization.arrayToDataTable(dataArray);
+
+            const options = {
+                enableInteractivity: false,
+                pieSliceText: 'value',
+                slices: {
+                    0: { color: '#e44c64' },
+                    1: { color: '#8dceab' },
+                }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('vulnerability-rate'));
+            chart.draw(dataTable, options);
+        }
+
+        function drawVulnerabilityScoreChart() {
+            const dataArray = getVulnerabilityScoreData();
+            const dataTable = new google.visualization.arrayToDataTable(dataArray);
+
+            const options = {
+                enableInteractivity: false,
+                pieSliceText: 'value',
+                slices: {
+                    {% for vulnerabilityScore in vulnerabilityScores -%}
+                        {{ forloop.index0 }}: { color: '{{ vulnerabilityScore.color }}' },
+                    {% endfor -%}
+                }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('vulnerability-score'));
+            chart.draw(dataTable, options);
+        }
+    </script>
+
+    <style>
+        h2 {
+            margin: 2.0pt 0 0;
+            line-height: 107%;
+            font-size: 13.0pt;
+            font-family: "Calibri Light", sans-serif;
+            color: #27344C;
+            font-weight: bolder;
+        }
+        
+        th {
+            background-color: #4F81BD;
+            color: white;
+            border-bottom: 1px solid;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #E9EDF4;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #D0D8E8;
+        }
+        
+        .width-100 {
+            width: 100%;
+        }
+
+        .text-align-center {
+            text-align: center;
+        }
+        
+        .pie-chart {
+            width: 450px;
+            height: 250px;
+        }
+        
+        .column {
+        float: left;
+            width: 33.33%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+
+</head>
+
+<body onload="onLoad()">
+<div>
+    <div class="row">
+        <div class="column">
+            <h2 class="text-align-center">Rate of vulnerable dependencies</h2>
+            <div id="vulnerability-rate" class="pie-chart"></div>
+        </div>
+        <div class="column">
+            <h2 class="text-align-center">Score rates for vulnerabilities</h2>
+            <div id="vulnerability-score" class="pie-chart"></div>
+        </div>
+    </div>
+    <div>
+        <h2 class="text-align-center">Top 10 of vulnerable dependencies</h2>
+
+         <table class="width-100">
+              <tr>
+                <th>Name</th>
+                <th>Severity/Score</th>
+                <th>Details url</th>
+              </tr>
+             {% for vulnerability in topTenVulnerableDependencies -%}
+                 <tr>
+                     <td>
+                         <p>{{ vulnerability.name | escape }}</p>
+                     </td>
+                     <td>
+                         <p>{{ vulnerability.severity | escape }}/{{ vulnerability.score | escape }}</p>
+                     </td>
+                     <td>
+                         <p>{{ vulnerability.url | escape }}</p>
+                     </td>
+                 </tr>
+             {% endfor %}
+        </table>
+    </div>
+</div>
+</body>
+</html>
