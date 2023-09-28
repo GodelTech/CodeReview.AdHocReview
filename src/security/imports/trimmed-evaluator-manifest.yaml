@@ -1,0 +1,39 @@
+requests:
+
+  totalNumberOfVulnerabilities:
+    query: SELECT COUNT(1) FROM Issues WHERE Level = 'Error'
+    type: Scalar
+
+  totalNumberOfDependencies:
+    query: 
+      SELECT COUNT(DISTINCT il.FilePath) AS totalNumberOfVulnerableDependencies
+      FROM Issues as i INNER JOIN IssueLocations as il ON i.Id = il.IssueId
+    type: Scalar
+
+  vulnerabilityScores:
+    query:
+      SELECT '0-4' as range, COUNT(*) as count, '#e1d9cc' as color, 0 AS o FROM Issues as i
+      INNER JOIN IssueProperties AS ip ON i.Id = ip.IssueId
+      WHERE i.Level = 'Error' AND ip.Property = 'score' AND ip.Value <= 4
+      UNION
+      SELECT '5-8' as range, COUNT(*) as count, '#fdd881' as color, 1 AS o FROM Issues as i
+      INNER JOIN IssueProperties AS ip ON i.Id = ip.IssueId
+      WHERE i.Level = 'Error' AND ip.Property = 'score' AND ip.Value > 4 AND ip.Value <= 8
+      UNION
+      SELECT '9-10' as range, COUNT(*) as count, '#e44c64' as color, 2 AS o FROM Issues AS i
+      INNER JOIN IssueProperties AS ip ON i.Id = ip.IssueId
+      WHERE i.Level = 'Error' AND ip.Property = 'score' AND ip.Value > 8
+      ORDER BY o
+    type: Collection
+
+  topTenVulnerableDependencies:
+    query:
+      SELECT i.RuleId as name, ip1.Value as score, ip2.Value as severity, i.DetailsUrl as url
+      FROM Issues as i
+      INNER JOIN IssueLocations as il ON i.Id = il.IssueId
+      INNER JOIN IssueProperties as ip1 ON i.Id = ip1.IssueId AND ip1.Property = 'score'
+      INNER JOIN IssueProperties as ip2 ON i.Id = ip2.IssueId AND ip2.Property = 'severity'
+      WHERE i.Level = 'Error'
+      ORDER BY score DESC
+      LIMIT 10
+    type: Collection
