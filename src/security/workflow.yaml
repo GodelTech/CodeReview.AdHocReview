@@ -27,6 +27,7 @@ activities:
       - JSON
       - --out
       - /home/dependencycheck
+      - -n
   owaspDependencyChecker-converter:
     image: godeltech/codereview.file-converter
     volumes:
