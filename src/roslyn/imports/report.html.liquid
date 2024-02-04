@@ -1,353 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart', 'bar']});
-        google.charts.setOnLoadCallback(drawCharts);
-
-        function drawCharts() {
-            drawLanguageChart();
-            drawIssuesChart();
-        }
-
-        function drawIssuesChart() {
-            let array = [
-                ['Description', 'Count'],
-                {% for issue in topTenIssuesByDescription -%}
-                ["{{ issue.description }}", {{ issue.count }}],
-                {% endfor -%}
-            ];
-
-            for (let i = 0; i < array.length; i++) {
-                if (array[i][0].length > 50) {
-                    array[i][0] = array[i][0].substring(0, 49) + '...';
-                }
-            }
-
-            const data = new google.visualization.arrayToDataTable(array);
-            const options = {
-                title: 'Distribution issues by category',
-                bars: 'horizontal',
-                legend: { position: "none" },
-            }
-
-            const chart = new google.charts.Bar(document.getElementById('issues-chart'));
-            chart.draw(data, options);
-        }
-
-        function drawLanguageChart() {
-            const totalCount = {{ totalFilesCount }};
-            const array = [
-                ['Language', 'Count'],
-                {% for file in topFiveLanguages -%}
-                ['{{ file.language }}', {{ file.count }}],
-                {% endfor -%}
-            ];
-
-            const other = totalCount - array.slice(1, array.length).reduce((partialSum, a) => partialSum + a[1], 0);
-            array.push(["Other", other]);
-
-            const data = google.visualization.arrayToDataTable(array);
-
-            const options = {
-                title: 'Language'
-            };
-
-            const chart = new google.visualization.PieChart(document.getElementById('language-piechart'));
-
-            chart.draw(data, options);
-        }
-
-        function onLoad() {
-            calculateMaintainabilityIndex();
-        }
-
-        function calculateMaintainabilityIndex() {
-            const errorCount = {{ totalErrorCount }};
-            const warningCount = {{ totalWarningCount }};
-            const infoCount = {{ totalInfoCount }};
-
-            let errorIndex =
-                errorCount * 10 +
-                warningCount * 1 +
-                infoCount * 0.1;
-
-            errorIndex = Math.max(errorIndex, 1);
-            errorIndex = {{ totalCodeCount }} / errorIndex;
-            errorIndex = Math.log2(errorIndex);
-            errorIndex = Math.round(errorIndex * 100) / 100;
-
-            document.getElementById('maintainability-index').textContent = errorIndex;
-
-            let spanElement = document.getElementById('maintainability-text');
-            if (errorIndex >= 5) {
-                spanElement.textContent = "This level is considered as good";
-                spanElement.style.color = "#6FAC47";
-            }
-            else if (errorIndex >= 4) {
-                spanElement.textContent = "errorIndex >= 4";
-                spanElement.style.color = "#6FAC47";
-            }
-            else if (errorIndex >= 3) {
-                spanElement.textContent = "errorIndex >= 3";
-                spanElement.style.color = "#6FAC47";
-            }
-            else if (errorIndex >= 2) {
-                spanElement.textContent = "errorIndex >= 2";
-                spanElement.style.color = "#6FAC47";
-            }
-            else if (errorIndex >= 1) {
-                spanElement.textContent = "errorIndex >= 1";
-                spanElement.style.color = "#6FAC47";
-            }
-            else if (errorIndex < 1) {
-                spanElement.textContent = "errorIndex < 1";
-                spanElement.style.color = "#6FAC47";
-            }
-        }
-    </script>
+    <meta charset="UTF-8">
+    <title>Full report</title>
 
     <style>
-        <!--
-        /* Font Definitions */
-        @font-face {
-            font-family: "Cambria Math";
-            panose-1: 2 4 5 3 5 4 6 3 2 4;
-        }
-
-        @font-face {
-            font-family: Calibri;
-            panose-1: 2 15 5 2 2 2 4 3 2 4;
-        }
-
-        @font-face {
-            font-family: "Calibri Light";
-            panose-1: 2 15 3 2 2 2 4 3 2 4;
-        }
-
-        /* Style Definitions */
-        p.MsoNormal, li.MsoNormal, div.MsoNormal {
-            margin: 0 0 8.0pt;
-            line-height: 107%;
-            font-size: 11.0pt;
-            font-family: "Calibri", sans-serif;
-        }
-
-        h1 {
-            mso-style-link: "Heading 1 Char";
-            margin: 12.0pt 0 0;
-            line-height: 107%;
-            page-break-after: avoid;
-            font-size: 16.0pt;
-            font-family: "Calibri Light", sans-serif;
-            color: #2F5496;
-            font-weight: normal;
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
         }
 
         h2 {
-            mso-style-link: "Heading 2 Char";
             margin: 2.0pt 0 0;
             line-height: 107%;
-            page-break-after: avoid;
             font-size: 13.0pt;
             font-family: "Calibri Light", sans-serif;
-            color: #2F5496;
-            font-weight: normal;
+            color: #27344C;
+            font-weight: bolder;
         }
 
-        h3 {
-            mso-style-link: "Heading 3 Char";
-            margin: 2.0pt 0 0;
-            line-height: 107%;
-            page-break-after: avoid;
-            font-size: 12.0pt;
-            font-family: "Calibri Light", sans-serif;
-            color: #1F3763;
-            font-weight: normal;
+        .text-align-center {
+            text-align: center;
         }
 
-        @page WordSection1 {
-            size: 8.5in 11.0in;
-            margin: 1.0in 1.0in 1.0in 1.0in;
+        .background-color-red {
+            background-color: #e44c64;
         }
 
-        div.WordSection1 {
-            page: WordSection1;
+        .background-color-yellow {
+            background-color: #fdd881;
         }
-        -->
+
+        .background-color-grey {
+            background-color: #e1d9cc;
+        }
+
+        .pie-chart {
+            width: 450px;
+            height: 250px;
+        }
+
+        .column {
+            float: left;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .pagination {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .pagination button:hover {
+            color: #4F81BD; /* Change color on hover */
+        }
+
+        .pagination button {
+            border: none;
+            background: none;
+            margin: 0 5px;
+            font-size: 16px;
+            padding: 8px 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .pagination-pages {
+            display: inline-block;
+        }
+
+        .pagination-pages-selected {
+            background-color: #4F81BD !important;
+            border: none !important;
+            border-radius: 5px !important;
+            color: #ffffff !important;
+        }
+
+        .hidden-row {
+            display: none;
+        }
+
+        .godel-table {
+            width: 100%;
+        }
+
+        .godel-table th {
+            background-color: #4F81BD;
+            color: white;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .godel-table td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .godel-table th:hover {
+            cursor: pointer;
+        }
+
+        .godel-table tbody tr:nth-child(odd) {
+            background-color: #E9EDF4;
+        }
+
+        .godel-table tbody tr:nth-child(even) {
+            background-color: #D0D8E8;
+        }
     </style>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+        
+        const colors = {
+            green: '#8dceab',
+            red: '#e44c64',
+            yellow: '#fdd881',
+            grey: '#e1d9cc',
+        };
+
+        const highIssuesCount = {{ highIssuesCount }};
+        const mediumIssuesCount = {{ mediumIssuesCount }};
+        const lowIssuesCount = {{ lowIssuesCount }};
+        const totalCodeCount = {{ totalCodeCount }};
+
+        const avgFileSize = {{ avgFileSize }};
+        const avgFileSizeTitle = '{{ avgFileSizeTitle.range }}';
+
+        const ordering = {
+            none: 0,
+            asc: 1,
+            desc: 2
+        }
+
+        google.charts.load('current', {'packages': ['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function getProgrammingLanguagesDataArray() {
+            return [
+                ['Programming languages', 'index'],
+                {% for file in topFiveLanguages -%}
+                    ['{{ file.language }}', {{ file.count }}],
+                {% endfor -%}
+            ]
+        }
+
+        function getFileSizesDataArray() {
+            return [
+                ['File size range', 'count', {role: 'style'}],
+                {% for fileSizeRange in fileSizeRanges -%}
+                    ['{{ fileSizeRange.range }}', {{ fileSizeRange.count }}, '{{ fileSizeRange.color }}'],
+                {% endfor -%}
+            ]
+        }
+
+        function getMaintainabilityIndex() {
+            let index =
+                highIssuesCount * 10 +
+                mediumIssuesCount * 1 +
+                lowIssuesCount * 0.1;
+
+            index = Math.max(index, 1);
+            index = totalCodeCount / index;
+            index = Math.log2(index);
+            index = Math.round(index * 100) / 100;
+
+            return index;
+        }
+
+        function drawCharts() {
+            drawMaintainabilityIndex();
+            drawIssuesChart();
+            drawFileSizeChart();
+            drawProgrammingLanguagesChart();
+        }
+
+        function drawProgrammingLanguagesChart() {
+            const dataArray = getProgrammingLanguagesDataArray();
+            const dataTable = new google.visualization.arrayToDataTable(dataArray);
+
+            const chart = new google.visualization.PieChart(document.getElementById('programming-languages'));
+            chart.draw(dataTable);
+        }
+
+        function drawMaintainabilityIndex() {
+            const index = getMaintainabilityIndex();
+
+            const dataArray = [
+                ['Maintainability Index', 'index'],
+                ['Index', index]
+            ];
+
+            const dataTable = new google.visualization.arrayToDataTable(dataArray);
+
+            const options = {
+                enableInteractivity: false,
+                pieSliceText: 'value',
+                pieHole: 0.75,
+                pieSliceTextStyle: {
+                    color: 'black',
+                    fontSize: 21
+                },
+                slices: {
+                    0: {color: colors.green}
+                },
+                width: 250,
+                height: 200,
+                legend: 'none'
+            };
+
+            if (index >= 4) {
+                options.slices[0].color = colors.green;
+                document.getElementById('maintainability-title').innerText = 'This level is considered as good';
+            } else if (index >= 2) {
+                options.slices[0].color = colors.yellow;
+                document.getElementById('maintainability-title').innerText = 'This level is considered as normal';
+            } else {
+                options.slices[0].color = colors.red;
+                document.getElementById('maintainability-title').innerText = 'This level is considered as bad';
+            }
+
+            const chart = new google.visualization.PieChart(document.getElementById('maintainability-index'));
+            chart.draw(dataTable, options);
+        }
+
+        function drawIssuesChart() {
+            const dataArray = [
+                ['Issue name', 'count'],
+                ['High', highIssuesCount],
+                ['Medium', mediumIssuesCount],
+                ['Low', lowIssuesCount],
+            ];
+            const data = new google.visualization.arrayToDataTable(dataArray);
+
+            const options = {
+                legend: 'none',
+                pieSliceText: 'none',
+                slices: {
+                    0: {color: colors.red},
+                    1: {color: colors.yellow},
+                    2: {color: colors.grey}
+                }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('issues'));
+            chart.draw(data, options);
+
+            document.getElementById('high-issues-count').innerText = highIssuesCount;
+            document.getElementById('medium-issues-count').innerText = mediumIssuesCount;
+            document.getElementById('low-issues-count').innerText = lowIssuesCount;
+        }
+
+        function drawFileSizeChart() {
+            const dataArray = getFileSizesDataArray();
+            const data = new google.visualization.arrayToDataTable(dataArray);
+
+            const options = {
+                width: 400,
+                height: 200,
+                bar: {groupWidth: "95%"},
+                legend: {position: "none"},
+            };
+
+            const chart = new google.visualization.ColumnChart(document.getElementById('file-size'));
+            chart.draw(data, options);
+
+            document.getElementById('file-size-title').innerText = avgFileSizeTitle;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            createPaginationTable('issues_container',
+                {
+                    id: 'issues_table',
+                    itemsPerPage: 10,
+                    headers: ['Issue', 'Severity', 'Title', 'Description', 'File'],
+                    rows: [
+                        {% for issue in issues -%}
+                            ['{{ issue.ruleId }}', '{{ issue.severity }}', '{{ issue.title }}', '{{ issue.message }}', '{{ issue.filePath }}'],
+                        {% endfor -%}
+                    ]
+                });
+        });
+
+        function createPaginationTable(tableContainerId, tableData) {
+            tableData.headerOrderState = Array.apply(ordering.none, Array(tableData.headers.length));
+
+            const tableContainer = document.getElementById(tableContainerId);
+            const table = document.getElementById(tableData.id);
+
+            const thead = document.createElement('thead');
+            table.appendChild(thead);
+
+            const tr = document.createElement('tr');
+            tableData.headers.forEach((item, index) => {
+                const th = document.createElement('th');
+                th.textContent = item;
+                tr.appendChild(th);
+
+                th.addEventListener('click', function () {
+                    onTableSort(index, tableData);
+                });
+            });
+            thead.appendChild(tr);
+
+            buildTableRows(tableData);
+
+            const paginationContainer = document.createElement('div');
+            paginationContainer.classList.add('pagination');
+            tableContainer.appendChild(paginationContainer);
+
+            const currentPageInput = document.createElement('input');
+            currentPageInput.id = tableData.id + '_current_page'
+            currentPageInput.type = 'hidden';
+            paginationContainer.appendChild(currentPageInput);
+
+            const prevButton = document.createElement('button');
+            prevButton.id = tableData.id + '_previous';
+            prevButton.textContent = '< Previous';
+            paginationContainer.appendChild(prevButton);
+
+            const totalPages = Math.ceil(tableData.rows.length / tableData.itemsPerPage);
+
+            const paginationPages = document.createElement('div');
+            paginationPages.id = tableData.id + '_pagination_pages';
+            paginationPages.classList.add('pagination-pages');
+            paginationContainer.appendChild(paginationPages);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                paginationPages.appendChild(pageButton);
+
+                pageButton.addEventListener('click', function () {
+                    onPageChanging(tableData.id, i, tableData.itemsPerPage);
+                })
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.id = tableData.id + '_next';
+            nextButton.textContent = 'Next >';
+            paginationContainer.appendChild(nextButton);
+
+            nextButton.addEventListener('click', function () {
+                const currentPageInput = document.getElementById(tableData.id + "_current_page");
+                const currentPage = parseInt(currentPageInput.value, 10);
+
+                onPageChanging(tableData.id, currentPage + 1, tableData.itemsPerPage);
+            });
+
+            prevButton.addEventListener('click', function () {
+                const currentPageInput = document.getElementById(tableData.id + "_current_page");
+                const currentPage = parseInt(currentPageInput.value, 10);
+
+                onPageChanging(tableData.id, currentPage - 1, tableData.itemsPerPage);
+            });
+
+            onPageChanging(tableData.id, 1, tableData.itemsPerPage);
+        }
+
+        function buildTableRows(tableData) {
+            const table = document.getElementById(tableData.id);
+
+            const tbody = document.createElement('tbody');
+            table.appendChild(tbody);
+
+            tableData.rows.forEach((row) => {
+                const tr = document.createElement('tr')
+                tbody.appendChild(tr);
+
+                row.forEach((item) => {
+                    const td = document.createElement('td');
+                    td.textContent = item;
+                    tr.appendChild(td);
+                })
+            });
+        }
+
+        function onPageChanging(id, page, itemsPerPage) {
+            //pagination-pages-selected
+            const table = document.getElementById(id);
+            const nextButton = document.getElementById(id + '_next');
+            const prevButton = document.getElementById(id + '_previous');
+            const paginationPages = document.getElementById(id + '_pagination_pages');
+            const currentPageInput = document.getElementById(id + "_current_page");
+
+            currentPageInput.value = page;
+
+            const items = Array.from(table.getElementsByTagName('tr')).slice(1);
+            const totalPages = Math.ceil(items.length / itemsPerPage);
+
+            const currentPage = parseInt(currentPageInput.value, 10);
+
+            const pageButtons = paginationPages.getElementsByTagName('button');
+            for (let button of pageButtons) {
+                button.classList.remove('pagination-pages-selected');
+            }
+
+            const selectedButton = pageButtons[currentPage - 1];
+            selectedButton.classList.add('pagination-pages-selected');
+
+            nextButton.disabled = currentPage === totalPages;
+            prevButton.disabled = currentPage === 1;
+
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+
+            items.forEach((item, index) => {
+                item.classList.toggle('hidden-row', index < startIndex || index >= endIndex);
+            });
+        }
+
+        function onTableSort(headerIndex, tableData) {
+            const table = document.getElementById(tableData.id);
+
+            const tbody = table.getElementsByTagName('tbody')[0];
+            table.removeChild(tbody);
+
+            if (tableData.headerOrderState[headerIndex] === ordering.asc) {
+                tableData.rows.sort(function (left, right) {
+                    return right[headerIndex].localeCompare(left[headerIndex])
+                });
+
+                tableData.headerOrderState[headerIndex] = ordering.desc;
+            }
+            else {
+                tableData.rows.sort(function (left, right) {
+                    return left[headerIndex].localeCompare(right[headerIndex])
+                });
+
+                tableData.headerOrderState[headerIndex] = ordering.asc;
+            }
+
+            buildTableRows(tableData);
+            onPageChanging(tableData.id, 1, tableData.itemsPerPage);
+        }
+    </script>
 </head>
+<body>
+<div>
+    <h1 class="text-align-center">Overview of Report</h1>
 
-<body onload="onLoad()">
-<div class=WordSection1>
-    <h1>Overview of Report</h1>
+    <div class="row">
+        <!-- Maintainability index -->
+        <div class="column">
+            <h2 class="text-align-center">Maintainability index</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div id="maintainability-index"></div>
+                <div>
+                    <p id="maintainability-title" style="margin: 0;"></p>
+                </div>
+            </div>
+        </div>
 
-    <p class=MsoNormal>This report contains details of C# code state. Automated code analysis tools like Roslyn were used to evaluate level of issues.</p>
+        <!-- Issues -->
+        <div class="column">
+            <h2 class="text-align-center">Issues</h2>
+            <div style="display: flex;">
+                <div id="issues" style="width: 250px; height: 250px;"></div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <table style="width: 250px; height: 100px;">
+                        <tr>
+                            <th style="border-bottom: 2px solid; width: 70%; font-weight: normal;">Severity</th>
+                            <th style="border-bottom: 2px solid; font-weight: normal;">Count</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center;">
+                                    <span class="dot background-color-red"></span>
+                                    <p style="font-size: small; margin-left: 5px;">High</p>
+                                </div>
+                            </td>
+                            <td id="high-issues-count"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center;">
+                                    <span class="dot background-color-yellow"></span>
+                                    <p style="font-size: small; margin-left: 5px;">Medium</p>
+                                </div>
+                            </td>
+                            <td id="medium-issues-count"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center;">
+                                    <span class="dot background-color-grey"></span>
+                                    <p style="font-size: small; margin-left: 5px;">Low</p>
+                                </div>
+                            </td>
+                            <td id="low-issues-count"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-    <h1>Repository Details</h1>
+        <!-- File size -->
+        <div class="column">
+            <h2 class="text-align-center">File size</h2>
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div id="file-size"></div>
+                <div>
+                    <p id="file-size-title" style="margin: 0; word-break: break-word;"></p>
+                </div>
+            </div>
+        </div>
 
-    <h2>General information</h2>
+        <!-- Programming languages -->
+        <div class="column">
+            <h2 class="text-align-center">Programming languages</h2>
+            <div id="programming-languages" style="width: 350px; height: 250px;"></div>
+        </div>
+    </div>
 
-    <p class=MsoNormal>
-        <b>Maintainability index:</b> <span id="maintainability-index"></span> (high quality codebase index is equal or higher to 5) - <b><span id="maintainability-text"></span></b>
-    </p>
-
-    <p class=MsoNormal><b>Source Code Size:</b>
-        {{ projectSize.range }}
-    </p>
-
-    <p class=MsoNormal><b>Programming languages statistics:</b></p>
-
-    <div id="language-piechart" style="width: 900px; height: 500px;"></div>
-
-    <h2>File Size Details</h2>
-
-    <p class=MsoNormal>
-        <b>Total files found:</b> {{ totalLanguagesFilesCount.value }} - {{ totalLanguagesFilesCount.range }}
-    </p>
-
-    <p class=MsoNormal>
-        <b>Biggest file size:</b> {{ biggestFileSize.value }} (LoC) - {{ biggestFileSize.range }}
-    </p>
-
-    <p class=MsoNormal>
-        <b>Average file size: </b> {{ averageFileSize.value }} (LoC) - {{ averageFileSize.range }}
-    </p>
-
-    <h3>Top 10 biggest files for primary development language (C#, cshtml)</h3>
-
-    <table class=MsoTableGrid style='border-collapse:collapse;border:none'>
-        <tr>
-            <td style='width:117.0pt;border:solid black 1.0pt; padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'><b>File Name</b></p>
-            </td>
-            <td style='width:117.0pt;border:solid black 1.0pt; border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:107%'><b>Size</b></p>
-            </td>
-            <td style='width:117.0pt;border:solid black 1.0pt; border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:107%'><b>Lines of Code</b></p>
-            </td>
-            <td style='width:117.0pt;border:solid black 1.0pt; border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'><b>File Page</b></p>
-            </td>
-        </tr>
-        {% for file in topTenBiggestFilesForLanguages -%}
-        <tr>
-            <td style='width:117.0pt;border:solid black 1.0pt; border-top:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ file.filePath | split: "/" | last }}</p>
-            </td>
-            <td style='width:117.0pt;border-top:none;border-left: none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ file.size }}</p>
-            </td>
-            <td style='width:117.0pt;border-top:none;border-left: none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ file.code }}</p>
-            </td>
-            <td style='width:117.0pt;border-top:none;border-left: none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ file.filePath }}</p>
-            </td>
-        </tr>
-        {% endfor -%}
-    </table>
-
-    <div style="page-break-before:always">&nbsp;</div>
-
-    <h2>C# Code Issues</h2>
-
-    <p class=MsoNormal>Distribution issues by category:</p>
-    <div id="issues-chart" style="width: 900px; height: 500px;"></div>
-
-    <h2>Top 10 of most frequent issues</h2>
-
-    <p class=MsoNormal>These are the issues which most frequently appear in your source code. Issues with low and medium severity does not cause potential quality issues but may cause inconvenies during </p>
-
-    <table class=MsoTableGrid style='border-collapse:collapse;border:none'>
-        <tr>
-            <td style='width:52.6pt;border:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Issue ID</p>
-            </td>
-            <td style='width:52.6pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>Severity</p>
-            </td>
-            <td style='width:71.25pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>Title</p>
-            </td>
-            <td style='width:94.55pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>Description</p>
-            </td>
-            <td style='width:197.05pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Count</p>
-            </td>
-        </tr>
-        {% for issue in topTenFrequentIssues -%}
-        <tr>
-            <td style='width:52.6pt;border:solid black 1.0pt;border-top:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.ruleId }}</p>
-            </td>
-            <td style='width:52.6pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.level }}</p>
-            </td>
-            <td style='width:197.05pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.title | escape }}</p>
-            </td>
-            <td style='width:197.05pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.description | escape }}</p>
-            </td>
-            <td style='width:52.6pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.count }}</p>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <div style="page-break-before:always">&nbsp;</div>
-
-    <h2>Top 10 of most severe issues</h2>
-    <p class=MsoNormal>Table below contains list of issues which are considered to be potential defects and require attention:</p>
-
-    <table class=MsoTableGrid style='border-collapse:collapse;border:none'>
-        <tr>
-            <td style='width:52.6pt;border:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Issue ID</p>
-            </td>
-            <td style='width:52.6pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>Severity</p>
-            </td>
-            <td style='width:71.25pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>Title</p>
-            </td>
-            <td style='width:94.55pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>Description</p>
-            </td>
-            <td style='width:197.05pt;border:solid black 1.0pt;border-left:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:107%'>Count</p>
-            </td>
-        </tr>
-        {% for issue in topTenSevereIssues -%}
-        <tr>
-            <td style='width:52.6pt;border:solid black 1.0pt;border-top:none;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.ruleId }}</p>
-            </td>
-            <td style='width:52.6pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.level }}</p>
-            </td>
-            <td style='width:197.05pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.title | escape }}</p>
-            </td>
-            <td style='width:197.05pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.description | escape }}</p>
-            </td>
-            <td style='width:52.6pt;border-top:none;border-left:none;border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;padding:0 5.4pt 0 5.4pt'>
-                <p class=MsoNormal style='margin-bottom:0;line-height:normal'>{{ issue.count }}</p>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <p class=MsoNormal>In many cases issues specified in the table above require fixes. Please plan technical activities to reduce amount of these issues.</p>
+    <!-- Issues table -->
+    <div id="issues_container">
+        <h1 class="text-align-center">Code Issues</h1>
+        <table id="issues_table" class="godel-table"></table>
+    </div>
 </div>
 </body>
 </html>
