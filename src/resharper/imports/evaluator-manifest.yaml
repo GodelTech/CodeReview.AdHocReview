@@ -1,81 +1,113 @@
 queries:
   issueCountByLevel:
-    query: SELECT COUNT(1) FROM Issues WHERE Level = $Level
+    query:
+      SELECT COUNT(1) FROM Issues
+      WHERE Level = $Level
 requests:
-  totalFilesCount:
-    query: SELECT COUNT(1) AS count FROM FileDetails
-    type: Scalar
-  totalCodeCount:
-    query: SELECT SUM(Code) FROM FileDetails WHERE Language IN ('C#', 'cshtml')
-    type: Scalar
-  totalLanguagesFilesCount:
-    query: SELECT COUNT(1) as count FROM FileDetails WHERE Language IN ('C#', 'cshtml')
-    ranges:
-      CSharp and CSHTML files:
-        start: 0
-  totalErrorCount:
+
+  highIssuesCount:
     queryRef: issueCountByLevel
     type: Scalar
     parameters:
       Level: Error
-  totalInfoCount:
-    queryRef: issueCountByLevel
-    type: Scalar
-    parameters:
-      Level: Info
-  totalWarningCount:
+
+  mediumIssuesCount:
     queryRef: issueCountByLevel
     type: Scalar
     parameters:
       Level: Warning
+
+  lowIssuesCount:
+    queryRef: issueCountByLevel
+    type: Scalar
+    parameters:
+      Level: Info
+
+  totalCodeCount:
+    query:
+      SELECT SUM(Code) FROM FileDetails
+      WHERE Language IN ('C#', 'cshtml')
+    type: Scalar
+
+  avgFileSize:
+    query:
+      SELECT CAST(AVG(Code) AS INTEGER) as value FROM FileDetails
+      WHERE Language IN ('C#', 'cshtml')
+    type: Scalar
+
+  avgFileSizeTitle:
+    query:
+      SELECT CAST(AVG(Code) AS INTEGER) as value FROM FileDetails
+      WHERE Language IN ('C#', 'cshtml')
+    ranges:
+      File size is good:
+        end: 199
+      File size is acceptable but should be moved to smaller numbers:
+        start: 200
+        end: 1999
+      File size is considered to be unmaintainable:
+        start: 2000
+
   topFiveLanguages:
-    query: SELECT Language, count(1) AS count FROM FileDetails GROUP BY Language ORDER BY count DESC LIMIT 5
+    query:
+      SELECT Language, count(1) AS count FROM FileDetails
+      GROUP BY Language
+      ORDER BY count DESC
+      LIMIT 5
     type: Collection
-  topTenBiggestFilesForLanguages:
-    query: SELECT FilePath, Code, CASE WHEN Code < 100 THEN 'S' WHEN Code > 100 AND Code < 300 THEN 'M' WHEN Code > 300 AND Code < 500 THEN 'L' ELSE 'XL' END Size FROM FileDetails WHERE Language IN ('C#', 'cshtml') ORDER BY Code DESC LIMIT 10
+
+  topFiveSevereIssues:
+    query:
+      SELECT
+        COUNT(1) as Count,
+        RuleId,
+        Level,
+        CASE Level
+          WHEN 'Error' THEN 3
+          WHEN 'Warning' THEN 2
+          WHEN 'Info' THEN 1
+          ELSE 0
+        END Severity,
+        Title,
+        Description
+      FROM Issues
+      GROUP BY RuleId
+      ORDER BY Severity DESC, Count DESC
+      LIMIT 5
     type: Collection
-  topTenFrequentIssues:
-    query: Select Count(1) as Count, RuleId, Level, Title, Description from Issues GROUP BY RuleId ORDER BY Count DESC LIMIT 10
+
+  topFiveFrequentIssues:
+    query:
+      SELECT Count(1) as Count, RuleId, Level, Title, Description FROM Issues
+      GROUP BY RuleId
+      ORDER BY Count DESC LIMIT 5
     type: Collection
-  topTenSevereIssues:
-    query: SELECT COUNT(1) as Count, RuleId, Level, CASE Level WHEN 'Error' THEN 3 WHEN 'Warning' THEN 2 WHEN 'Info' THEN 1 ELSE 0 END Severity, Title, Description FROM Issues GROUP BY RuleId ORDER BY Severity DESC, Count DESC LIMIT 10
+
+  fileSizeRanges:
+    query:
+      SELECT count(1) as count, '< 200' as range, '#8dceab' as color, 0 as o FROM FileDetails WHERE Code < 200
+      UNION
+      SELECT count(1) as count, '< 2000' as range, '#fdd881' as color, 1 as o FROM FileDetails WHERE Code < 2000
+      UNION
+      SELECT count(1) as count, '> 2000' as range, '#e44c64' as color, 2 as o FROM FileDetails WHERE Code > 2000
+      ORDER BY o
     type: Collection
-  topTenIssuesByDescription:
-    query: SELECT Description, Count(1) AS count FROM Issues GROUP BY Description ORDER BY Count DESC LIMIT 10
+
+  issues:
+    query: 
+      SELECT
+        i.RuleId,
+        i.Level,
+        CASE i.Level
+          WHEN 'Error' THEN 3
+          WHEN 'Warning' THEN 2
+          WHEN 'Info' THEN 1
+          ELSE 0
+        END Severity,
+        REPLACE(i.Title, '''', '\''') Title,
+        REPLACE(i.Message, '''', '\''') Message,
+        il.FilePath  || ' '|| il.StartLine || ':' FilePath
+      FROM Issues i
+      INNER JOIN IssueLocations il ON i.Id = il.IssueId
+      ORDER BY Severity DESC
     type: Collection
-  biggestFileSize:
-    query: SELECT Code FROM FileDetails WHERE Language IN ('C#', 'cshtml') ORDER BY Code DESC LIMIT 1
-    ranges:
-      <b><span style='color:#6FAC47'>File size is good</span></b>:
-        end: 199
-      <b><span style='color:#C45911'>File size is acceptable but should be moved to smaller numbers</span></b>:
-        start: 200
-        end: 1999
-      <b><span style='color:red'>File size is considered to be unmaintainable</span></b>:
-        start: 2000
-  averageFileSize:
-    query: SELECT CAST(AVG(Code) AS INTEGER) as value FROM FileDetails WHERE Language IN ('C#', 'cshtml')
-    ranges:
-      <b><span style='color:#6FAC47'>File size is good</span></b>:
-        end: 199
-      <b><span style='color:#C45911'>File size is acceptable but should be moved to smaller numbers</span></b>:
-        start: 200
-        end: 1999
-      <b><span style='color:red'>File size is considered to be unmaintainable</span></b>:
-        start: 2000
-  projectSize:
-    query: SELECT COUNT(1) AS count FROM FileDetails WHERE Language IN ('C#', 'cshtml')
-    ranges:
-      XS (x &lt;= 1000) - <b><span style='color:#6FAC47'> Codebase size is good </span></b>:
-        end: 1000
-      S (1000 &lt; x &lt;= 10000) - <b><span style='color:#6FAC47'> Codebase size is good </span></b>:
-        start: 1001
-        end: 10000
-      M (10000 &lt; x &lt;= 100000) - <b><span style='color:#6FAC47'> Codebase size is average </span></b>:
-        start: 10001
-        end: 100000
-      L (100000 &lt; x &lt;= 500000) - <b><span style='color:#C45911'> Codebase size is bad </span></b>:
-        start: 100001
-        end: 500000
-      XL (500000 &lt; x) - <b><span style='color:red'> Codebase size is bad </span></b>:
-        start: 500001
